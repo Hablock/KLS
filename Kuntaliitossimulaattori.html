@@ -81,10 +81,17 @@ input[type=range]::-moz-range-thumb {
   background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid var(--panel);
 }
 .slider-ticks {
-  display: flex; justify-content: space-between;
+  position: relative;
+  height: 1.4em;
   font-size: 10px; color: var(--muted);
   margin-top: 6px;
 }
+.slider-ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+.slider-ticks span:first-child { transform: none; }
+.slider-ticks span:last-child  { transform: translateX(-100%); }
 .criterion-box {
   padding: 12px 24px 14px;
   border-bottom: 1px solid var(--border);
@@ -328,11 +335,16 @@ svg.map:active { cursor: grabbing; }
     <div class="slider-box">
       <div class="slider-label">
         <span class="lbl">Minimiasukasluku</span>
-        <span class="val" id="sliderVal">5 000</span>
+        <span class="val" id="sliderVal">500</span>
       </div>
-      <input type="range" id="slider" min="0" max="100" value="0" step="1">
+      <input type="range" id="slider" min="0" max="100" value="19" step="1">
       <div class="slider-ticks">
-        <span>100</span><span>1k</span><span>5k</span><span>20k</span><span>100k</span><span>500k</span>
+        <span style="left:0%">100</span>
+        <span style="left:27%">1k</span>
+        <span style="left:46%">5k</span>
+        <span style="left:62%">20k</span>
+        <span style="left:81%">100k</span>
+        <span style="left:100%">500k</span>
       </div>
     </div>
     <div class="criterion-box">
@@ -809,16 +821,23 @@ function updateLegend() {
   }
 }
 
-// Slider: 0..100 -> log-scale 100..500000
+// Slider: 0..100 -> log-scale 100..500000, snappaa lähimpään tasalukuun
+const NICE_VALUES = [
+  100, 150, 200, 300, 500, 750,
+  1000, 1500, 2000, 3000, 5000, 7500,
+  10000, 15000, 20000, 30000, 50000, 75000,
+  100000, 150000, 200000, 300000, 500000
+];
 function sliderToMinPop(v) {
-  // v: 0..100, output: 100..500000 logaritmisesti
   const t = v / 100;
-  const minPop = Math.round(Math.pow(10, 2 + t * (Math.log10(500000) - 2)));
-  // Pyöristys mukaviin lukuihin
-  if (minPop < 1000) return Math.round(minPop / 50) * 50;
-  if (minPop < 10000) return Math.round(minPop / 500) * 500;
-  if (minPop < 100000) return Math.round(minPop / 1000) * 1000;
-  return Math.round(minPop / 5000) * 5000;
+  const raw = Math.pow(10, 2 + t * (Math.log10(500000) - 2));
+  const logRaw = Math.log10(raw);
+  let best = NICE_VALUES[0], bestDist = Infinity;
+  for (const n of NICE_VALUES) {
+    const d = Math.abs(Math.log10(n) - logRaw);
+    if (d < bestDist) { bestDist = d; best = n; }
+  }
+  return best;
 }
 
 let debounceTimer = null;
@@ -960,7 +979,7 @@ svg.addEventListener('touchend', e => {
 }, { passive: false });
 
 // Aloita
-onSliderChange(0);
+onSliderChange(19);
 </script>
 </body>
 </html>
