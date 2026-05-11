@@ -43,11 +43,10 @@ body {
   min-width: 360px; max-width: 520px;
 }
 header {
-  padding: 20px 24px 14px;
+  padding: 12px 24px 10px;
   border-bottom: 1px solid var(--border);
 }
-h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 3px; }
-.subtitle { font-size: 11px; color: var(--muted); }
+h1 { font-size: 13px; font-weight: 600; letter-spacing: 0.3px; }
 
 .slider-box {
   padding: 16px 24px 14px;
@@ -230,6 +229,7 @@ svg.map:active { cursor: grabbing; }
   color: var(--muted); text-transform: uppercase;
   letter-spacing: 0.5px; margin-bottom: 8px; font-size: 9px;
 }
+.legend-body { display: block; }
 .legend-bar { display: flex; height: 11px; width: 200px; margin-bottom: 5px; }
 .legend-bar div { flex: 1; }
 .legend-labels {
@@ -316,6 +316,28 @@ svg.map:active { cursor: grabbing; }
 
   .view-toggle { display: flex; }
 
+  /* Pystysuora selite kartan oikeaan reunaan */
+  .legend {
+    bottom: auto; left: auto;
+    top: 50%; right: 8px;
+    transform: translateY(-50%);
+    padding: 8px;
+  }
+  .legend-title { display: none; }
+  .legend-body {
+    display: flex; flex-direction: row; align-items: stretch; gap: 5px;
+  }
+  .legend-bar {
+    width: 10px; height: 120px;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+  .legend-labels {
+    flex-direction: column; justify-content: space-between;
+    height: 120px; width: auto;
+  }
+  .legend-labels span { line-height: 1; }
+
   /* Map tab */
   .app.show-map .map-wrap { display: flex; }
   .app.show-map .search-row,
@@ -341,9 +363,11 @@ svg.map:active { cursor: grabbing; }
       </div>
       <div class="legend">
         <div class="legend-title">Asukasluku</div>
-        <div class="legend-bar" id="legendBar"></div>
-        <div class="legend-labels" id="legendLabels">
-          <span></span><span></span><span></span><span></span><span></span>
+        <div class="legend-body">
+          <div class="legend-bar" id="legendBar"></div>
+          <div class="legend-labels" id="legendLabels">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
         </div>
       </div>
       <div class="source">Lähde: Tilastokeskus / Wikipedia · Yhdistämissimulaatio</div>
@@ -353,7 +377,6 @@ svg.map:active { cursor: grabbing; }
   <div class="table-panel">
     <header>
       <h1>Kuntaliitossimulaattori v2</h1>
-      <div class="subtitle">Pakota kunnat yhdistymään asukaslukuminimiin</div>
     </header>
     <div class="slider-box">
       <div class="slider-label">
